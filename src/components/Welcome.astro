@@ -9,9 +9,11 @@ import background from '../assets/background.svg';
       <a href="https://astro.build">
         <img src="https://s3.amazonaws.com/static.khipu.com/buttons/2024/200x75-color.svg" width="115" height="48" alt="Astro Homepage" />
       </a>
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABlElEQVR4nO2YvUoDQRSFPwVjQOwt/OnEB7AKvoKlqey0s8wb2LjaiG9gHwSxMjGFnTaCnfZuFCxUFCEpZCQwRZCZ3Z11dO7AfnCaLe6ew+y9dxmoqKioCM0S0AOGwBeQAsfACpHQA5RBA2CDCPiwBJCoAdAB5scDXAgwphx1/rMHuroHVCR6tX1OdeBRgEGVo7usnmgLMKhyNJqSVloCDKoc7WQFaAgwqHK0mhVgWo8rJVQD7TGTawFGlUVXFOBQgFFl0VGRAE0BRpVFm0UCLAgwqixapiAPAswqwwaeKBqgLf0fKA+JC20XByQutHWXAHWBC20ORyQttFtKIGmhbZUJ0BQ0fSbLBJCw0E6BGX5BGsD0M3DmOnVcFtpoR0RDyxDghIhoGAJ8AmtEwhTw8s89MNT3VYu+QhwEmkBdXwFmgfsAAd7xyOg+8ibWExjvh23gEnj74x7o+OyBConUgH19GdwHEv0sVB1nEsO3mwSs44zpGv4pYB1n+oYXpwHreDn6vYB1nKnpl/c9NHHioU4FIfgGdcAu8V8cg7YAAAAASUVORK5CYII="
+      <img 
+        id="open-cart"
+        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABlElEQVR4nO2YvUoDQRSFPwVjQOwt/OnEB7AKvoKlqey0s8wb2LjaiG9gHwSxMjGFnTaCnfZuFCxUFCEpZCQwRZCZ3Z11dO7AfnCaLe6ew+y9dxmoqKioCM0S0AOGwBeQAsfACpHQA5RBA2CDCPiwBJCoAdAB5scDXAgwphx1/rMHuroHVCR6tX1OdeBRgEGVo7usnmgLMKhyNJqSVloCDKoc7WQFaAgwqHK0mhVgWo8rJVQD7TGTawFGlUVXFOBQgFFl0VGRAE0BRpVFm0UCLAgwqixapiAPAswqwwaeKBqgLf0fKA+JC20XByQutHWXAHWBC20ORyQttFtKIGmhbZUJ0BQ0fSbLBJCw0E6BGX5BGsD0M3DmOnVcFtpoR0RDyxDghIhoGAJ8AmtEwhTw8s89MNT3VYu+QhwEmkBdXwFmgfsAAd7xyOg+8ibWExjvh23gEnj74x7o+OyBConUgH19GdwHEv0sVB1nEsO3mwSs44zpGv4pYB1n+oYXpwHreDn6vYB1nKnpl/c9NHHioU4FIfgGdcAu8V8cg7YAAAAASUVORK5CYII="
         alt="shopping-cart"
-        class="rounded-md bg-purple-200 hover:bg-purple-300 transition-all p-2 w-12"
+        class="rounded-md bg-purple-200 hover:bg-purple-300 transition-all p-2 w-12 cursor-pointer"
       >
     </section>
 		<section id="hero" class="px-2 md:px-4 py-10">
@@ -201,3 +203,10 @@ import background from '../assets/background.svg';
 		}
 	}
 </style>
+
+<script>
+document.getElementById('open-cart')?.addEventListener('click', () => {
+    const event = new CustomEvent('cart:open');
+    document.dispatchEvent(event);
+  });
+</script>
