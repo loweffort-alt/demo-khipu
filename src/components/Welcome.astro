@@ -1,20 +1,28 @@
 ---
-import astroLogo from '../assets/astro.svg';
 import background from '../assets/background.svg';
 ---
 
 <div id="container">
 	<img id="background" src={background.src} alt="" fetchpriority="high" />
 	<main>
-		<section id="hero">
-			<a href="https://astro.build"
-				><img src={astroLogo.src} width="115" height="48" alt="Astro Homepage" /></a
-			>
+    <section id="navbar" class="p-2 md:p-4 flex justify-between">
+      <a href="https://astro.build">
+        <img src="https://s3.amazonaws.com/static.khipu.com/buttons/2024/200x75-color.svg" width="115" height="48" alt="Astro Homepage" />
+      </a>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABlElEQVR4nO2YvUoDQRSFPwVjQOwt/OnEB7AKvoKlqey0s8wb2LjaiG9gHwSxMjGFnTaCnfZuFCxUFCEpZCQwRZCZ3Z11dO7AfnCaLe6ew+y9dxmoqKioCM0S0AOGwBeQAsfACpHQA5RBA2CDCPiwBJCoAdAB5scDXAgwphx1/rMHuroHVCR6tX1OdeBRgEGVo7usnmgLMKhyNJqSVloCDKoc7WQFaAgwqHK0mhVgWo8rJVQD7TGTawFGlUVXFOBQgFFl0VGRAE0BRpVFm0UCLAgwqixapiAPAswqwwaeKBqgLf0fKA+JC20XByQutHWXAHWBC20ORyQttFtKIGmhbZUJ0BQ0fSbLBJCw0E6BGX5BGsD0M3DmOnVcFtpoR0RDyxDghIhoGAJ8AmtEwhTw8s89MNT3VYu+QhwEmkBdXwFmgfsAAd7xyOg+8ibWExjvh23gEnj74x7o+OyBConUgH19GdwHEv0sVB1nEsO3mwSs44zpGv4pYB1n+oYXpwHreDn6vYB1nKnpl/c9NHHioU4FIfgGdcAu8V8cg7YAAAAASUVORK5CYII="
+        alt="shopping-cart"
+        class="rounded-md bg-purple-200 hover:bg-purple-300 transition-all p-2 w-12"
+      >
+    </section>
+		<section id="hero" class="px-2 md:px-4 py-10">
 			<h1>
-				To get started, open the <code><pre>src/pages</pre></code> directory in your project.
+        Bienvenidos a <code><pre>Khipu Commerce!</pre></code>
 			</h1>
+      <p class="py-5">
+        Donde podrás encontrar los mejores descuentos en nuestras tiendas afiliadas.
+      </p>
 			<section id="links">
-				<a class="button" href="https://docs.astro.build">Read our docs</a>
+				<a class="button" href="https://docs.astro.build">Khipu docs</a>
 				<a href="https://astro.build/chat"
 					>Join our Discord <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36"
 						><path
@@ -26,19 +34,6 @@ import background from '../assets/background.svg';
 			</section>
 		</section>
 	</main>
-
-	<a href="https://astro.build/blog/astro-5/" id="news" class="box">
-		<svg width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg"
-			><path
-				d="M24.667 12c1.333 1.414 2 3.192 2 5.334 0 4.62-4.934 5.7-7.334 12C18.444 28.567 18 27.456 18 26c0-4.642 6.667-7.053 6.667-14Zm-5.334-5.333c1.6 1.65 2.4 3.43 2.4 5.333 0 6.602-8.06 7.59-6.4 17.334C13.111 27.787 12 25.564 12 22.666c0-4.434 7.333-8 7.333-16Zm-6-5.333C15.111 3.555 16 5.556 16 7.333c0 8.333-11.333 10.962-5.333 22-3.488-.774-6-4-6-8 0-8.667 8.666-10 8.666-20Z"
-				fill="#111827"></path></svg
-		>
-		<h2>What's New in Astro 5.0?</h2>
-		<p>
-			From content layers to server islands, click to learn more about the new features and
-			improvements in Astro 5.0
-		</p>
-	</a>
 </div>
 
 <style>
@@ -54,13 +49,11 @@ import background from '../assets/background.svg';
 
 	#container {
 		font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
-		height: 100%;
 	}
 
 	main {
-		height: 100%;
 		display: flex;
-		justify-content: center;
+    flex-direction: column;
 	}
 
 	#hero {
@@ -68,7 +61,6 @@ import background from '../assets/background.svg';
 		align-items: start;
 		flex-direction: column;
 		justify-content: center;
-		padding: 16px;
 	}
 
 	h1 {
@@ -117,8 +109,9 @@ import background from '../assets/background.svg';
 		font-family:
 			ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono',
 			monospace;
-		font-weight: normal;
-		background: linear-gradient(14deg, #d83333 0%, #f041ff 100%);
+		font-weight: Bold;
+    font-size: 1.5rem;
+		background: linear-gradient(14deg, #8347ad 0%, #d0499c 100%);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
@@ -143,8 +136,8 @@ import background from '../assets/background.svg';
 	code {
 		display: inline-block;
 		background:
-			linear-gradient(66.77deg, #f3cddd 0%, #f5cee7 100%) padding-box,
-			linear-gradient(155deg, #d83333 0%, #f041ff 18%, #f5cee7 45%) border-box;
+			linear-gradient(66.77deg, #ffe9ff 0%, #ffe9ff 100%) padding-box,
+			linear-gradient(155deg, #8347ad 0%, #d0499c 18%, #ffe9ff 45%) border-box;
 		border-radius: 8px;
 		border: 1px solid transparent;
 		padding: 6px 8px;
