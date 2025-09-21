@@ -1,0 +1,323 @@
+<!-- Overlay invisible para cerrar al hacer click fuera -->
+<div
+  id="cart-overlay"
+  class="fixed inset-0 z-40 opacity-0 invisible transition-opacity duration-300"
+></div>
+
+<section
+  id="cart"
+  class="h-screen bg-black/25 backdrop-blur-2xl w-1/3 flex flex-col fixed right-0 top-0 p-4 translate-x-full transition-all z-50"
+>
+  <div class="flex justify-between items-center mb-10">
+    <h2 class="font-semibold text-lg text-white">
+      Carrito de Compras! (<span id="cart-counter">0</span>)
+    </h2>
+    <img
+      id="close-cart"
+      class="rounded-md bg-purple-200 hover:bg-purple-300 transition-all p-2 w-12 cursor-pointer"
+      src="https://img.icons8.com/?size=100&id=71200&format=png&color=000000"
+      alt="close cart icon"
+    >
+  </div>
+  
+  <!-- Container para los productos del carrito -->
+  <div id="cart-items" class="flex flex-col gap-4 flex-1 overflow-y-auto">
+    <!-- Los productos se cargarán aquí dinámicamente -->
+  </div>
+  
+  <!-- Mensaje cuando el carrito está vacío -->
+  <div id="empty-cart" class="flex-1 flex items-center justify-center text-gray-500">
+    <p>Tu carrito está vacío</p>
+  </div>
+  
+  <!-- Total y botón de compra -->
+  <div class="mt-4 pt-4 border-t border-purple-300">
+    <div class="flex justify-between items-center mb-4">
+      <span class="font-bold text-lg">Total: $<span id="cart-total">0.00</span></span>
+    </div>
+    <button 
+      id="buy-button"
+      class="w-full p-2 px-4 rounded-xl font-semibold cursor-pointer hover:scale-105 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed disabled:scale-100 text-black"
+      disabled
+    >
+      💳 Pagar con Khipu
+    </button>
+    
+    <!-- Estado de carga del pago -->
+    <div id="payment-loading" class="hidden w-full p-2 px-4 rounded-xl bg-blue-100 text-blue-800 text-center">
+      <span class="inline-block animate-spin mr-2">⏳</span>
+      Procesando pago...
+    </div>
+    
+    <!-- Error de pago -->
+    <div id="payment-error" class="hidden w-full p-2 px-4 rounded-xl bg-red-100 text-red-800 text-sm">
+      <span class="block font-bold">Error en el pago:</span>
+      <span id="payment-error-message"></span>
+    </div>
+  </div>
+</section>
+
+<style>
+	#buy-button {
+		background: linear-gradient(83.21deg, #3245ff 0%, #bc52ee 100%);
+	}
+
+</style>
+
+<script>
+  const sidebar = document.getElementById('cart');
+  const overlay = document.getElementById('cart-overlay');
+  const closeBtn = document.getElementById('close-cart');
+  const cartItemsContainer = document.getElementById('cart-items');
+  const emptyCartMessage = document.getElementById('empty-cart');
+  const cartCounter = document.getElementById('cart-counter');
+  const cartTotal = document.getElementById('cart-total');
+  const buyButton = document.getElementById('buy-button');
+  
+  let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+  
+  function renderCartItems() {
+    if (cartItems.length === 0) {
+      cartItemsContainer.innerHTML = '';
+      emptyCartMessage.style.display = 'flex';
+      buyButton.disabled = true;
+      cartCounter.textContent = '0';
+      cartTotal.textContent = '0.00';
+      return;
+    }
+    
+    emptyCartMessage.style.display = 'none';
+    buyButton.disabled = false;
+    
+    // Actualizar contador
+    const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    cartCounter.textContent = totalItems;
+    
+    // Actualizar total (fijo en 1 CLP para testing)
+    const total = 1;
+    cartTotal.textContent = total.toFixed(2);
+    
+    // Renderizar items
+    cartItemsContainer.innerHTML = cartItems.map(item => `
+      <div class="bg-white/25 p-2 flex justify-between rounded-md gap-4 h-fit" data-item-id="${item.id}">
+        <div class="flex-1">
+          <h3 class="font-bold text-base">
+            ${item.title?.length > 25 ? item.title.substring(0, 25) + '...' : item.title}
+          </h3>
+          <p class="text-sm my-2">
+            Precio: $${item.price} × ${item.quantity} = $${(item.price * item.quantity).toFixed(2)}
+          </p>
+          <div class="flex justify-between items-start">
+            <div class="flex items-center gap-2 mb-2">
+              <button class="quantity-btn w-6 h-6 rounded" data-action="decrease" data-id="${item.id}">
+                <img
+                  class="object-contain cursor-pointer"
+                  src="https://img.icons8.com/?size=30&id=59837&format=png&color=000000"
+                  alt="delete item icon"
+                  data-id="${item.id}"
+                >
+              </button>
+              <span class="px-2 font-semibold">${item.quantity}</span>
+                <button class="quantity-btn w-6 h-6 rounded" data-action="increase" data-id="${item.id}">
+                  <img
+                    class="object-contain cursor-pointer"
+                    src="https://img.icons8.com/?size=30&id=60953&format=png&color=000000"
+                    alt="delete item icon"
+                    data-id="${item.id}"
+                  >
+                </button>
+            </div>
+            <img
+              class="remove-item rounded-md hover:bg-slate-400 transition-all p-0.5 w-6 h-6 object-contain cursor-pointer"
+              src="https://img.icons8.com/?size=100&id=67884&format=png&color=000000"
+              alt="delete item icon"
+              data-id="${item.id}"
+            >
+          </div>
+        </div>
+        <img
+          class="rounded-md bg-neutral-100 p-1 w-24 h-24 object-contain"
+          src="${item.image}"
+          alt="${item.title}"
+        >
+      </div>
+    `).join('');
+  }
+  
+  function removeFromCart(productId) {
+    cartItems = cartItems.filter(item => item.id !== productId);
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    renderCartItems();
+    updateNavbarCounter();
+  }
+  
+  function updateQuantity(productId, action) {
+    const itemIndex = cartItems.findIndex(item => item.id === productId);
+    if (itemIndex > -1) {
+      if (action === 'increase') {
+        cartItems[itemIndex].quantity += 1;
+      } else if (action === 'decrease') {
+        cartItems[itemIndex].quantity -= 1;
+        if (cartItems[itemIndex].quantity <= 0) {
+          cartItems.splice(itemIndex, 1);
+        }
+      }
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      renderCartItems();
+      updateNavbarCounter();
+    }
+  }
+  
+  function updateNavbarCounter() {
+    // Actualizar el contador del navbar si existe
+    const navbarCounter = document.getElementById('navbar-cart-counter');
+    if (navbarCounter) {
+      const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+      navbarCounter.textContent = totalItems;
+    }
+  }
+  
+  function openCart() {
+    // Mostrar overlay
+    overlay?.classList.remove('opacity-0', 'invisible');
+    overlay?.classList.add('opacity-100', 'visible');
+
+    // Mostrar carrito
+    sidebar?.classList.remove('translate-x-full');
+    sidebar?.classList.add('translate-x-0');
+
+    renderCartItems(); // Actualizar contenido al abrir
+  }
+
+  function closeCart() {
+    // Ocultar overlay
+    overlay?.classList.remove('opacity-100', 'visible');
+    overlay?.classList.add('opacity-0', 'invisible');
+
+    // Ocultar carrito
+    sidebar?.classList.remove('translate-x-0');
+    sidebar?.classList.add('translate-x-full');
+  }
+  
+  // Event listeners
+  document.addEventListener('cart:open', openCart);
+  closeBtn?.addEventListener('click', closeCart);
+  overlay?.addEventListener('click', closeCart);
+  
+  // Event listener para cuando se actualiza el carrito desde ProductGrid
+  document.addEventListener('cart:updated', () => {
+    cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    renderCartItems();
+    updateNavbarCounter();
+  });
+  
+  // Event delegation para botones dinámicos
+  cartItemsContainer?.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.remove-item');
+    const quantityBtn = e.target.closest('.quantity-btn');
+    
+    if (removeBtn) {
+      const productId = parseInt(removeBtn.dataset.id);
+      removeFromCart(productId);
+    } else if (quantityBtn) {
+      const productId = parseInt(quantityBtn.dataset.id);
+      const action = quantityBtn.dataset.action;
+      updateQuantity(productId, action);
+    }
+  });
+  
+  // Elementos de UI para el pago
+  const paymentLoading = document.getElementById('payment-loading');
+  const paymentError = document.getElementById('payment-error');
+  const paymentErrorMessage = document.getElementById('payment-error-message');
+  
+  // Función para crear pago con Khipu
+  async function createKhipuPayment() {
+    try {
+      showPaymentLoading(true);
+      hidePaymentError();
+      
+      const total = 1; // Monto fijo para testing
+
+      console.log('Iniciando pago con Khipu:', { cartItems, total });
+      
+      const response = await fetch('http://localhost:3001/api/payments/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          cartItems: cartItems,
+          total: total,
+          currency: 'PEN'
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log('Pago creado exitosamente:', data.data);
+        
+        // Guardar información del pago para referencia
+        localStorage.setItem('currentPayment', JSON.stringify({
+          transaction_id: data.data.transaction_id,
+          amount: data.data.amount,
+          currency: data.data.currency,
+          created_at: new Date().toISOString()
+        }));
+        
+        // Limpiar carrito
+        cartItems = [];
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        
+        // Redirigir a Khipu
+        window.location.href = data.data.payment_url;
+      } else {
+        throw new Error(data.error || 'Error al crear el pago');
+      }
+    } catch (error) {
+      console.error('Error en el pago:', error);
+      showPaymentError(error.message || 'Error al procesar el pago');
+    } finally {
+      showPaymentLoading(false);
+    }
+  }
+  
+  function showPaymentLoading(show) {
+    if (show) {
+      buyButton.style.display = 'none';
+      paymentLoading?.classList.remove('hidden');
+    } else {
+      buyButton.style.display = 'block';
+      paymentLoading?.classList.add('hidden');
+    }
+  }
+  
+  function showPaymentError(message) {
+    if (paymentErrorMessage) {
+      paymentErrorMessage.textContent = message;
+    }
+    paymentError?.classList.remove('hidden');
+  }
+  
+  function hidePaymentError() {
+    paymentError?.classList.add('hidden');
+  }
+
+  // Botón de compra con Khipu
+  buyButton?.addEventListener('click', () => {
+    if (cartItems.length > 0) {
+      createKhipuPayment();
+    }
+  });
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === "Escape") {
+      closeCart();
+    }
+  });
+  
+  // Inicializar al cargar la página
+  renderCartItems();
+  updateNavbarCounter();
+</script>

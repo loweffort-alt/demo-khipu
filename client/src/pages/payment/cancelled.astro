@@ -1,0 +1,109 @@
+---
+// src/pages/payment/cancelled.astro
+const title = "Pago Cancelado - Khipu Commerce";
+---
+
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff7b7b 0%, #ff9a9e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+        .cancel-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .info-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cancel-icon">⚠️</div>
+        <h1>Pago Cancelado</h1>
+        <p>El proceso de pago fue cancelado. No se realizó ningún cargo.</p>
+
+        <div class="info-box">
+            <h3>¿Qué puedes hacer ahora?</h3>
+            <ul style="text-align: left;">
+                <li>Volver a la tienda e intentar el pago nuevamente</li>
+                <li>Verificar que tienes fondos suficientes en tu cuenta</li>
+                <li>Contactar con soporte si necesitas ayuda</li>
+            </ul>
+        </div>
+
+        <a href="/" class="btn">🏠 Volver a la tienda</a>
+        <a href="javascript:void(0)" onclick="restoreCart()" class="btn btn-secondary">🛒 Restaurar carrito</a>
+    </div>
+
+    <script>
+        function restoreCart() {
+            // Intentar restaurar el carrito desde el último pago
+            const currentPayment = localStorage.getItem('currentPayment');
+
+            if (currentPayment) {
+                try {
+                    const paymentData = JSON.parse(currentPayment);
+                    // Aquí podrías implementar lógica para restaurar el carrito
+                    // Por ahora, simplemente redirigimos a la tienda
+                    alert('Redirigiendo a la tienda...');
+                } catch (error) {
+                    console.error('Error restoring cart:', error);
+                }
+            }
+
+            window.location.href = '/';
+        }
+
+        // Limpiar información de pago cancelado después de 5 minutos
+        setTimeout(() => {
+            localStorage.removeItem('currentPayment');
+        }, 5 * 60 * 1000);
+    </script>
+</body>
+</html>

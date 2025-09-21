@@ -1,16 +1,14 @@
 {
   "name": "demo-ecommerce",
-  "type": "module",
+  "type": "module", 
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+    "dev": "cd client && npm run dev",
+    "build": "cd client && npm run build", 
+    "preview": "cd client && npm run preview",
+    "install:client": "cd client && npm install"
   },
-  "dependencies": {
-    "@tailwindcss/vite": "^4.1.13",
-    "astro": "^5.13.8",
-    "tailwindcss": "^4.1.13"
-  }
+  "workspaces": [
+    "client"
+  ]
 }

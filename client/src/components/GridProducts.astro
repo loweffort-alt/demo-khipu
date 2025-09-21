@@ -5,17 +5,17 @@ const products = await response.json();
 
 <section class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-8 p-8">
   {products.map((product, i) => 
-    <div class="flex flex-col gap-4 bg-white/40 justify-between rounded-xl p-4 cursor-pointer transition-all hover:scale-105 hover:bg-white/75"> 
+    <div class="flex flex-col gap-4 bg-white/20 justify-between rounded-xl p-4 cursor-pointer transition-all hover:scale-105 hover:bg-white/30"> 
       <img src={product.image} class="w-full h-40 object-contain" alt="product" />
       <p class="text-sm">
         {product.title}
       </p>
       <div class="flex justify-between">
-        <span class="bg-neutral-200 font-bold rounded-lg p-2 w-fit">
+        <span class="font-semibold rounded-lg p-2 w-fit">
           ${product.price}
         </span>
         <span 
-          class="add-item bg-purple-200 font-bold rounded-lg p-2 w-fit cursor-pointer hover:bg-purple-300 hover:scale-110 transition-all"
+          class="add-item bg-purple-400 font-bold rounded-lg p-1 w-fit cursor-pointer hover:bg-purple-500 hover:scale-110 transition-all"
           data-product-id={String(product.id)}
           data-product-title={product.title}
           data-product-price={String(product.price)}
@@ -74,7 +74,7 @@ const products = await response.json();
     if (!toast) {
       toast = document.createElement('div');
       toast.id = 'cart-toast';
-      toast.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+      toast.className = 'fixed top-20 right-0 bg-green-900 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
       document.body.appendChild(toast);
     }
     

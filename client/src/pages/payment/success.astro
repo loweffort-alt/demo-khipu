@@ -1,0 +1,186 @@
+---
+// src/pages/payment/success.astro
+const title = "Pago Exitoso - Khipu Commerce";
+---
+
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .payment-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loading-state">
+            <div class="success-icon">⏳</div>
+            <h1>Verificando tu pago...</h1>
+            <div class="loading"></div>
+            <p>Por favor espera mientras confirmamos tu transacción con el banco.</p>
+        </div>
+
+        <div id="success-state" style="display: none;">
+            <div class="success-icon">✅</div>
+            <h1>¡Pago Confirmado!</h1>
+            <p>Tu compra ha sido procesada exitosamente.</p>
+
+            <div class="payment-details">
+                <h3>Detalles del Pago</h3>
+                <p><strong>ID de Transacción:</strong> <span id="transaction-id">-</span></p>
+                <p><strong>Monto:</strong> <span id="amount">-</span></p>
+                <p><strong>Fecha:</strong> <span id="date">-</span></p>
+            </div>
+
+            <a href="/" class="btn">🏠 Volver a la tienda</a>
+        </div>
+
+        <div id="error-state" style="display: none;">
+            <div class="success-icon">❌</div>
+            <h1>Error en el pago</h1>
+            <p>No pudimos confirmar tu pago. Por favor contacta con soporte.</p>
+
+            <a href="/" class="btn btn-secondary">🏠 Volver a la tienda</a>
+            <a href="#" onclick="location.reload()" class="btn">🔄 Reintentar</a>
+        </div>
+    </div>
+
+    <script>
+        // Obtener parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('transaction_id');
+
+        // Estados de la página
+        const loadingState = document.getElementById('loading-state');
+        const successState = document.getElementById('success-state');
+        const errorState = document.getElementById('error-state');
+
+        // Elementos para mostrar datos
+        const transactionIdEl = document.getElementById('transaction-id');
+        const amountEl = document.getElementById('amount');
+        const dateEl = document.getElementById('date');
+
+        async function checkPaymentStatus() {
+            if (!transactionId) {
+                showError('No se encontró ID de transacción');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3001/api/payments/status/${transactionId}`);
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    const payment = data.data;
+
+                    if (payment.status === 'confirmed') {
+                        showSuccess(payment);
+                    } else if (payment.status === 'pending') {
+                        // Continuar verificando
+                        setTimeout(checkPaymentStatus, 3000);
+                    } else {
+                        showError('El pago no pudo ser procesado');
+                    }
+                } else {
+                    showError(data.error || 'Error al verificar el pago');
+                }
+            } catch (error) {
+                console.error('Error checking payment:', error);
+                showError('Error de conexión');
+            }
+        }
+
+        function showSuccess(payment) {
+            loadingState.style.display = 'none';
+            errorState.style.display = 'none';
+            successState.style.display = 'block';
+
+            // Mostrar detalles
+            transactionIdEl.textContent = payment.transaction_id;
+            amountEl.textContent = `$${payment.total.toLocaleString('es-CL')} ${payment.currency}`;
+            dateEl.textContent = new Date(payment.confirmed_at || payment.created_at).toLocaleString('es-CL');
+        }
+
+        function showError(message) {
+            loadingState.style.display = 'none';
+            successState.style.display = 'none';
+            errorState.style.display = 'block';
+
+            console.error('Payment error:', message);
+        }
+
+        // Iniciar verificación
+        checkPaymentStatus();
+
+        // Timeout de seguridad
+        setTimeout(() => {
+            if (loadingState.style.display !== 'none') {
+                showError('Timeout verificando el pago');
+            }
+        }, 120000); // 2 minutos
+    </script>
+</body>
+</html>
