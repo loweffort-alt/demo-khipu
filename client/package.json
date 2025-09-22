@@ -1,7 +1,8 @@
 {
-  "name": "demo-ecommerce",
+  "name": "demo-ecommerce-peru-client",
   "type": "module",
   "version": "0.0.1",
+  "description": "Frontend del demo e-commerce para Peru con Astro y Khipu",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

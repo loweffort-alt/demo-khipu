@@ -1,7 +1,8 @@
 {
-  "name": "demo-ecommerce",
-  "type": "module", 
+  "name": "demo-ecommerce-peru",
+  "type": "module",
   "version": "0.0.1",
+  "description": "Demo e-commerce con integración Khipu para el mercado peruano",
   "scripts": {
     "dev": "cd client && npm run dev",
     "build": "cd client && npm run build", 

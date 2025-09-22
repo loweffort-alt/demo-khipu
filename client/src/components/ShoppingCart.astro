@@ -16,7 +16,7 @@
       id="close-cart"
       class="rounded-md bg-purple-200 hover:bg-purple-300 transition-all p-2 w-12 cursor-pointer"
       src="https://img.icons8.com/?size=100&id=71200&format=png&color=000000"
-      alt="close cart icon"
+      alt="cerrar carrito"
     >
   </div>
   
@@ -33,7 +33,7 @@
   <!-- Total y botón de compra -->
   <div class="mt-4 pt-4 border-t border-purple-300">
     <div class="flex justify-between items-center mb-4">
-      <span class="font-bold text-lg">Total: $<span id="cart-total">0.00</span></span>
+      <span class="font-bold text-lg">Total: S/ <span id="cart-total">0.00</span></span>
     </div>
     <button 
       id="buy-button"
@@ -93,8 +93,8 @@
     const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
     cartCounter.textContent = totalItems;
     
-    // Actualizar total (fijo en 1 CLP para testing)
-    const total = 1;
+    // Actualizar total en PEN
+    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     cartTotal.textContent = total.toFixed(2);
     
     // Renderizar items
@@ -105,7 +105,7 @@
             ${item.title?.length > 25 ? item.title.substring(0, 25) + '...' : item.title}
           </h3>
           <p class="text-sm my-2">
-            Precio: $${item.price} × ${item.quantity} = $${(item.price * item.quantity).toFixed(2)}
+            Precio: S/ ${item.price} × ${item.quantity} = S/ ${(item.price * item.quantity).toFixed(2)}
           </p>
           <div class="flex justify-between items-start">
             <div class="flex items-center gap-2 mb-2">
@@ -113,7 +113,7 @@
                 <img
                   class="object-contain cursor-pointer"
                   src="https://img.icons8.com/?size=30&id=59837&format=png&color=000000"
-                  alt="delete item icon"
+                  alt="disminuir cantidad"
                   data-id="${item.id}"
                 >
               </button>
@@ -122,7 +122,7 @@
                   <img
                     class="object-contain cursor-pointer"
                     src="https://img.icons8.com/?size=30&id=60953&format=png&color=000000"
-                    alt="delete item icon"
+                    alt="aumentar cantidad"
                     data-id="${item.id}"
                   >
                 </button>
@@ -130,7 +130,7 @@
             <img
               class="remove-item rounded-md hover:bg-slate-400 transition-all p-0.5 w-6 h-6 object-contain cursor-pointer"
               src="https://img.icons8.com/?size=100&id=67884&format=png&color=000000"
-              alt="delete item icon"
+              alt="eliminar producto"
               data-id="${item.id}"
             >
           </div>
@@ -237,7 +237,7 @@
       showPaymentLoading(true);
       hidePaymentError();
       
-      const total = 1; // Monto fijo para testing
+      const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
       console.log('Iniciando pago con Khipu:', { cartItems, total });
       

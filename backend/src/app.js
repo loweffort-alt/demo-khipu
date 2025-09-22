@@ -1,7 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
 
 // Middleware
 const corsMiddleware = require("./middleware/cors");
@@ -17,37 +15,22 @@ const PORT = process.env.PORT || 3001;
 // Inicializar almacenamiento en memoria
 global.pendingPayments = new Map();
 
-// Security middleware
-app.use(helmet());
-
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP",
-});
-app.use(limiter);
-
-// CORS
+// CORS (necesario para desarrollo local)
 app.use(corsMiddleware);
 
 // Body parsing
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Logging middleware
+// Simple logging para desarrollo
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
   next();
 });
 
-// Health check
+// Health check simple
 app.get("/health", (req, res) => {
-  res.json({
-    status: "OK",
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
-  });
+  res.json({ status: "OK", environment: "development" });
 });
 
 // API routes

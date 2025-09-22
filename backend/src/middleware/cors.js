@@ -1,10 +1,9 @@
 const cors = require("cors");
 
+// CORS simple para desarrollo local
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:4321",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "x-khipu-signature"],
-  credentials: true,
+  origin: "http://localhost:4321",
+  credentials: true
 };
 
 module.exports = cors(corsOptions);

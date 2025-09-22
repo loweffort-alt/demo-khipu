@@ -55,18 +55,30 @@ class KhipuService {
    */
   async createPayment(paymentData) {
     try {
+      // Convertir PEN a CLP si es necesario (Khipu principalmente soporta CLP)
+      let amount = paymentData.amount;
+      let currency = paymentData.currency || "PEN";
+
+      // Si la moneda es PEN, convertir a CLP (tasa aproximada: 1 PEN = 130 CLP)
+      if (currency === "PEN") {
+        amount = Math.round(amount * 130); // Conversión aproximada PEN a CLP
+        currency = "CLP";
+        console.log(`[KHIPU] Convirtiendo de PEN ${paymentData.amount} a CLP ${amount}`);
+      }
+
       const payload = {
+        receiver_id: this.receiverId,
         subject: paymentData.subject,
-        amount: paymentData.amount,
-        currency: paymentData.currency || "CLP",
-        transaction_id: paymentData.transactionId,
-        return_url: paymentData.returnUrl,
-        cancel_url: paymentData.cancelUrl,
-        notify_url: paymentData.notifyUrl,
-        expires_date: paymentData.expiresDate || this.getDefaultExpiration(),
+        amount: amount,
+        currency: currency
       };
 
-      const response = await this.client.post("/payments", payload);
+      console.log('[KHIPU] Creating payment with minimal payload:', JSON.stringify(payload, null, 2));
+      console.log('[KHIPU] API Key (first 10 chars):', this.apiKey.substring(0, 10) + '...');
+      console.log('[KHIPU] Receiver ID:', this.receiverId);
+      console.log('[KHIPU] Base URL:', this.baseUrl);
+
+      const response = await this.client.post("/v3/payments", payload);
       return response.data;
     } catch (error) {
       this.handleError(error, "createPayment");
@@ -79,7 +91,7 @@ class KhipuService {
    */
   async getPayment(paymentId) {
     try {
-      const response = await this.client.get(`/payments/${paymentId}`);
+      const response = await this.client.get(`/v3/payments/${paymentId}`);
       return response.data;
     } catch (error) {
       this.handleError(error, "getPayment");
@@ -92,7 +104,7 @@ class KhipuService {
    */
   async getBanks() {
     try {
-      const response = await this.client.get("/banks");
+      const response = await this.client.get("/v3/banks");
       return response.data;
     } catch (error) {
       this.handleError(error, "getBanks");
@@ -121,6 +133,15 @@ class KhipuService {
     };
 
     console.error(`[KHIPU ERROR] ${operation}:`, errorInfo);
+
+    // Mensaje específico para error 403
+    if (error.response?.status === 403) {
+      console.error(`[KHIPU ERROR] 403 Forbidden: El API key no tiene privilegios suficientes.
+      Soluciones:
+      1. Verificar que el API key sea válido y esté activo
+      2. Asegurarse de que la cuenta tenga permisos para crear pagos
+      3. Contactar soporte de Khipu si el problema persiste`);
+    }
   }
 }
 

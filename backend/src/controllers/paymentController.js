@@ -7,7 +7,7 @@ class PaymentController {
    */
   async createPayment(req, res) {
     try {
-      const { cartItems, total, currency = "PEN" } = req.body;
+      const { cartItems, total, currency = "CLP" } = req.body;
 
       // Validar datos de entrada
       if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
