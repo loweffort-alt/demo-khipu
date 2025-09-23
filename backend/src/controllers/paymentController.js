@@ -31,11 +31,15 @@ class PaymentController {
       const itemsCount = cartItems.length;
       const subject = `Compra de ${itemsCount} producto${itemsCount > 1 ? "s" : ""} - ID: ${transactionId.slice(0, 8)}`;
 
+      // MODO DESARROLLO: Siempre usar 1 sol
+      const developmentAmount = 1.00;
+      console.log(`[PAYMENT] Development mode: Using fixed amount ${developmentAmount} PEN instead of ${total}`);
+
       // Configurar datos del pago
       const paymentData = {
         subject: subject,
-        amount: parseFloat(total),
-        currency: currency,
+        amount: developmentAmount,
+        currency: "PEN",
         transactionId: transactionId,
         returnUrl: `${process.env.FRONTEND_URL}/payment/success?transaction_id=${transactionId}`,
         cancelUrl: `${process.env.FRONTEND_URL}/payment/cancelled?transaction_id=${transactionId}`,
@@ -66,8 +70,8 @@ class PaymentController {
           transaction_id: transactionId,
           payment_id: khipuPayment.payment_id,
           payment_url: khipuPayment.payment_url,
-          amount: total,
-          currency: currency,
+          amount: developmentAmount,
+          currency: "PEN",
           expires_date: khipuPayment.expires_date,
         },
       });

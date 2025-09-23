@@ -12,13 +12,4 @@ export default defineConfig({
     port: 4321,
     host: true
   },
-  experimental: {
-    i18n: {
-      defaultLocale: 'es',
-      locales: ['es'],
-      routing: {
-        prefixDefaultLocale: false
-      }
-    }
-  }
 });

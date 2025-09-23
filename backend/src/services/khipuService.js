@@ -55,16 +55,11 @@ class KhipuService {
    */
   async createPayment(paymentData) {
     try {
-      // Convertir PEN a CLP si es necesario (Khipu principalmente soporta CLP)
-      let amount = paymentData.amount;
-      let currency = paymentData.currency || "PEN";
+      // Usar PEN directamente (tu cuenta Khipu está configurada para PEN)
+      const amount = paymentData.amount;
+      const currency = paymentData.currency || "PEN";
 
-      // Si la moneda es PEN, convertir a CLP (tasa aproximada: 1 PEN = 130 CLP)
-      if (currency === "PEN") {
-        amount = Math.round(amount * 130); // Conversión aproximada PEN a CLP
-        currency = "CLP";
-        console.log(`[KHIPU] Convirtiendo de PEN ${paymentData.amount} a CLP ${amount}`);
-      }
+      console.log(`[KHIPU] Creating payment in ${currency} ${amount}`);
 
       const payload = {
         receiver_id: this.receiverId,
